@@ -1,0 +1,3 @@
+[submodule "app/tools/nagios-icinga-openvpn"]
+	path = app/tools/nagios-icinga-openvpn
+	url = https://github.com/liquidat/nagios-icinga-openvpn.git
