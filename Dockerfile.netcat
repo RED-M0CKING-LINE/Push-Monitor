@@ -1,0 +1,7 @@
+FROM alpine:latest
+RUN apk add --no-cache bash coreutils curl jq
+COPY ./app/monitor.sh /app/monitor.sh
+RUN chmod +x /app/monitor.sh
+CMD ["sleep", "infinity"]
+
+RUN apk add --no-cache netcat-openbsd

@@ -1,0 +1,8 @@
+FROM alpine:latest
+RUN apk add --no-cache bash coreutils curl jq 
+COPY ./app/monitor.sh /app/monitor.sh
+RUN chmod +x /app/monitor.sh
+CMD ["sleep", "infinity"]
+
+COPY ./app/tools/nagios-icinga-openvpn/bin /app/tools/nagios-icinga-openvpn/bin
+RUN apk add --no-cache python3

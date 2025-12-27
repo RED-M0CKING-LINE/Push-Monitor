@@ -1,0 +1,53 @@
+x-push-monitor-defaults: &push-monitor-defaults
+  restart: unless-stopped
+  build: .
+  healthcheck: &push-monitor-healthcheck  # DO NOT MODIFY: Check script runs via healthcheck
+    test: ["CMD", "/app/monitor.sh"]
+    interval: 120s
+    timeout: 30s
+    start_period: 1s
+    retries: 0
+
+services:
+  vpn:
+    <<: *push-monitor-defaults
+    build:
+      dockerfile: Dockerfile.openvpn
+    environment:
+      PUSH_URL: "https://EXAMPLE.COM/api/push/TUQAHEDTX"  # Exclude any GET parameters
+      CMD: >
+        /usr/bin/python3 '/app/tools/nagios-icinga-openvpn/bin/check_openvpn' \
+          -p 1194 \
+          --retrycount 3 \
+          --digest sha256 \
+          --tls-auth '/mnt/tls-auth.pem' \
+          EXAMPLE.COM
+    volumes:
+      - './ORG/tls-auth.pem:/mnt/tls-auth.pem:ro'
+  netcat:
+    <<: *push-monitor-defaults
+    healthcheck:
+      <<: *push-monitor-healthcheck  # Overwrite one of the values but keep other defaults
+      interval: 30s
+    build:
+      dockerfile: Dockerfile.netcat
+    environment:
+      DEBUG: true
+      PUSH_URL: "https://EXAMPLE.COM/api/push/TUQAHEDTX"  # Exclude any GET parameters
+      CMD: >
+        nc -z -w 2 EXAMPLE.COM 443
+  nmap:
+    <<: *push-monitor-defaults
+    healthcheck:
+      <<: *push-monitor-healthcheck  # Overwrite one of the values but keep other defaults
+      interval: 120s
+      timeout: 100s
+    build:
+      dockerfile: Dockerfile.nmap
+    environment:
+      DEBUG: true
+      PUSH_URL: "https://EXAMPLE.COM/api/push/TUQAHEDTX"  # Exclude any GET parameters
+      CMD: >
+        nmap -n -oG - 192.168.1.1 | 
+        grep -F "$NMAP_EXPECTED"
+      NMAP_EXPECTED: "Host: 192.168.1.1 ()    Ports: 21/filtered/tcp//ftp///, 53/open/tcp//domain///, 80/open/tcp//http///, 443/open/tcp//https///    Ignored State: closed (996)"
