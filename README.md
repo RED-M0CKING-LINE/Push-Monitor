@@ -21,3 +21,9 @@ This repo contains submodules (references to other git repos)
   `git clone --recurse-submodules URL` will pull the repo with submodules
   
   `git submodule update --init --recursive` will pull submodules if youve already cloned the repo without them
+
+---
+
+Other things I could add
+- Wireguard
+- 

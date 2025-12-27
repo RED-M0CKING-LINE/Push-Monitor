@@ -23,7 +23,7 @@ services:
           --tls-auth '/mnt/tls-auth.pem' \
           EXAMPLE.COM
     volumes:
-      - './ORG/tls-auth.pem:/mnt/tls-auth.pem:ro'
+      - './secrets/tls-auth.pem:/mnt/tls-auth.pem:ro'
   netcat:
     <<: *push-monitor-defaults
     healthcheck:
